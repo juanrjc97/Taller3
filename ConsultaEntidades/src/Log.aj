@@ -14,6 +14,8 @@ public aspect Log {
     pointcut user():execution(void Bank.create*(..));
     
     //Advices para escribir en el documento luego de: realizar la transacción, retirar dinero o crear un usuario
+
+
     after() : transaction(){
         writeFile("Transaccion realizada "+cal.getTime());
     }
@@ -23,6 +25,7 @@ public aspect Log {
     after() : user(){
         writeFile("Usuario creado "+cal.getTime());
     }
+
 
     public void writeFile(String mensaje){
         try {
@@ -43,10 +46,15 @@ public aspect Log {
             e.printStackTrace();
         }
     }
+
+
+
 }
 
 public aspect Login {
     //Aspecto2: El login debe realizarse antes de la transacción
+
+        
         private static Scanner input = new Scanner(System.in);
         pointcut needLogin():execution(void Bank.make*(..))
                             ||execution(void Bank.my*(..));
