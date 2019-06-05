@@ -1,75 +1,50 @@
 
 
-package taller1;
 
 
 public aspect Log {
     
-    File file = new File("log.txt");
-    Calendar cal = Calendar.getInstance();
-    //Aspecto1: Deben hacer los puntos de cortes (pointcut) para crear un log con los tipos de transacciones realizadas.
+
+    pointcut iniciar():execution(void verificarSesion*(..));
+    pointcut producto():execution(void Producto.llenarPane*(..));
+    pointcut cliente():execution(void Clientes.llenarPane*(..));
     
-    pointcut transaction():execution(void Bank.make*(..));
-    pointcut money():execution(void Bank.my*(..));
-    pointcut user():execution(void Bank.create*(..));
+    pointcut Ccliente():execution(void Clientes.consultar*(..));
+    
+    pointcut Cproducto():execution(void Producto.consultar*(..));
+
     
     //Advices para escribir en el documento luego de: realizar la transacción, retirar dinero o crear un usuario
 
-
-    after() : transaction(){
-        writeFile("Transaccion realizada "+cal.getTime());
+    after() : Ccliente(){
+    	System.out.println("Iniciar Secion");
+    	IniciarSesion.initialize();
+       
     }
-    after() : money(){
-        writeFile("Dinero retirado "+cal.getTime());
+    
+    
+    after() : Cproducto(){
+    	System.out.println("Iniciar Secion");
+    	IniciarSesion.initialize();
+       
     }
-    after() : user(){
-        writeFile("Usuario creado "+cal.getTime());
+    
+    
+    after() : iniciar(){
+    	System.out.println("Secion Correctamente Iniciada");
+       
     }
-
-
-    public void writeFile(String mensaje){
-        try {
-            String content = mensaje;
-            // if file doesnt exists, then create it
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(content);
-            bw.close();
-
-            System.out.println("Escritura exitosa");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    after() : producto(){
+    	System.out.println("Producto Consultado Correctamente ");
     }
-
-
-
-}
-
-public aspect Login {
-    //Aspecto2: El login debe realizarse antes de la transacción
-
+    after() : cliente(){
+    	System.out.println("Cliente Consultado Correctamente");
         
-        private static Scanner input = new Scanner(System.in);
-        pointcut needLogin():execution(void Bank.make*(..))
-                            ||execution(void Bank.my*(..));
-        
-        before():needLogin(){
-            System.out.println("Es necesario ingresar al sistema");
-            readConsole("Nombre: ");
-            readConsole("Id: ");
-        }
+    }
 
-        public static  String readConsole(String mensaje){
-            System.out.println(mensaje);  
-            String inputText;
-            inputText = input.nextLine();           
-            return inputText;
-        }
+
+
+
+
 
 }
